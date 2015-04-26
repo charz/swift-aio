@@ -6,6 +6,14 @@
     sudo: no
     lineinfile: dest=/etc/swift/swift.conf line="default = yes" state=present insertafter="^name = {{default_storage_policy|default(gold)}}"
 
+  - name: remove the correct swift proxy ip
+    sudo: no
+    lineinfile: dest=/etc/swift/proxy-server.conf regexp="bind_ip = 127.0.0.1" state=absent
+
+  - name: set the correct swift proxy ip
+    sudo: no
+    lineinfile: dest=/etc/swift/proxy-server.conf line="bind_ip = 0.0.0.0" state=present insertbefore="bind_port = 8080"
+
   - name: reset swift
     sudo: no
     command: /home/{{ username }}/bin/resetswift
