@@ -4,6 +4,7 @@
 
   - name: installing dependencies
     yum: name={{ item }} state=present
+    when: ansible_distribution in ['RedHat', 'CentOS']
     with_items:
       - curl
       - gcc
@@ -28,6 +29,35 @@
       - python-pip
       - python-dns
       - python-mock
+
+  - name: installing dependencies
+    apt: name={{ item }} state=present update_cache=yes
+    when: ansible_distribution in ['Ubuntu', 'Debain']
+    with_items:
+      - curl
+      - gcc
+      - memcached
+      - rsync
+      - sqlite
+      - xfsprogs
+      - git
+      - git-core
+      - libffi-dev
+      - xinetd
+      - python-setuptools
+      - python-coverage
+      - python-dev
+      - python-nose
+      - python-simplejson 
+      - python-xattr
+      - python-eventlet
+      - python-greenlet
+      - python-pastedeploy
+      - python-netifaces
+      - python-pip
+      - python-dns
+      - python-mock
+
 
   - name: install python modules with pip
     pip: name={{ item }} state=present
@@ -100,6 +130,7 @@
 
   - name: create rc.local from template
     template: src=rc.local.j2 dest=/etc/rc.d/rc.local owner=root group=root mode=0755
+    when: ansible_distribution in ['RedHat', 'CentOS']
 
   - name: check if swift is already cloned
     stat: path=/home/{{ username }}/swift
@@ -148,12 +179,27 @@
 
   - name: enable rsync
     lineinfile: dest=/etc/xinetd.d/rsync line="disable = no" create=yes
+    when: ansible_distribution in ['RedHat', 'CentOS']
 
   - name: set selinux to permissive
     selinux: policy=targeted state=permissive
+    when: ansible_distribution in ['RedHat', 'CentOS']
 
   - name: restart rsync
     service: name=rsyncd state=restarted
+    when: ansible_distribution in ['RedHat', 'CentOS']
+
+  - name: remove rsync disable flag
+    lineinfile: dest=/etc/default/rsync regexp="RSYNC_ENABLE=false" state=absent
+    when: ansible_distribution in ['Ubuntu', 'Debain']
+
+  - name: enable rsync
+    lineinfile: dest=/etc/default/rsync line="RSYNC_ENABLE=true" create=yes
+    when: ansible_distribution in ['Ubuntu', 'Debain']
+
+  - name: start rsync
+    service: name=rsync state=restarted enabled=yes
+    when: ansible_distribution in ['Ubuntu', 'Debain']
 
   - name: start memcache
     service: name=memcached state=started enabled=yes
