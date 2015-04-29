@@ -1,4 +1,7 @@
-- hosts: all
+#!/usr/bin/env ansible-playbook
+---
+- name: deploy swift nodes
+  hosts: storage
   sudo: True
   vars_files:
     - "global_vars.yml"
@@ -7,3 +10,29 @@
     - swift
     - {role: swiftonfile, when: "{{ configure_swiftonfile }}" }
     - post_config
+
+- name: deploy benchmark nodes
+  hosts: benchmark
+  sudo: True
+  vars_files:
+    - "global_vars.yml"
+  roles:
+    - ssbench
+
+- name: run benchmark
+  hosts: benchmark
+  tags: run_benchmark
+  vars_files:
+    - "global_vars.yml"
+  roles:
+    - run_benchmark
+
+- name: retrieve result
+  hosts: storage
+  tags: retrieve_result
+  vars_files:
+    - "global_vars.yml"
+  roles:
+    - retrieve_result
+
+

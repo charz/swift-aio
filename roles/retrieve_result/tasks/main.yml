@@ -1,0 +1,15 @@
+---
+
+- shell: df
+  register: df_ret
+
+- name: show disk usage
+  local_action: command echo item
+  with_items: df_ret.stdout
+
+- name: Fetch syslog
+  sudo: yes
+  fetch: >
+    src=/var/log/syslog
+    dest=result/syslog
+    flat=yes

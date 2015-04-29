@@ -1,0 +1,17 @@
+---
+
+- name: Run ssbench-master on benchnodes (SKIP Load balancer)
+  shell: >
+    ssbench-master run-scenario
+    -f /usr/local/share/ssbench/scenarios/very_small.scenario 
+    -A {{auth}} 
+    -U {{user}} 
+    -K {{key}} 
+    -u 5 -r 10 --worker 1
+  register: result
+
+- name: show result
+  local_action: command echo item
+  with_items: result.stdout
+
+

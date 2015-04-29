@@ -19,4 +19,22 @@ Vagrant.configure(2) do |config|
         end
     end
   end
+
+  BM_VMS = 1
+  (0..BM_VMS-1).each do |vm|
+    config.vm.define "bm#{vm}" do |g|
+        g.vm.hostname = "bm#{vm}"
+        g.vm.network :private_network, ip: "192.168.56.10#{vm}"
+
+        if vm == (BM_VMS-1)
+            g.vm.provision :ansible do |ansible|
+                ansible.playbook = "site.yml"
+                ansible.groups = {
+                    "benchmark" => (0..BM_VMS-1).map { |v| "bm#{v}" },
+                }
+                ansible.limit='all'
+            end
+        end
+     end
+  end
 end

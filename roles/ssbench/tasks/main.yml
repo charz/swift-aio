@@ -1,0 +1,31 @@
+---
+
+- name: Installing(apt) packages for ssbench
+  apt: pkg={{item}} state=installed update-cache=yes
+  with_items:
+    - g++
+    - python-setuptools
+    - python-dev
+    - libzmq-dev
+    - python-pip
+    - libevent-dev
+
+- name: Installing(pip) python package
+  pip: name={{item}} state=latest
+  with_items:
+    - pip
+    - argparse
+    - Cython
+    - gevent
+
+- name: Installing(pip) python package(pyzmq)
+  pip: name=pyzmq version=2.2.0
+
+- name: Install(pip) python package
+  pip: name={{item}} state=present
+  with_items:
+    - gevent-zeromq
+    - http://python-statlib.googlecode.com/files/statlib-1.1.tar.gz
+    - https://github.com/charz/ssbench/archive/master.zip
+
+
