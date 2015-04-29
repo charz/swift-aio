@@ -1,6 +1,6 @@
 ---
 
-- name: Run ssbench-master on benchnodes (SKIP Load balancer)
+- name: Run ssbench
   shell: >
     ssbench-master run-scenario
     -f /usr/local/share/ssbench/scenarios/very_small.scenario 
