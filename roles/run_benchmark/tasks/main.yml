@@ -1,17 +1,25 @@
 ---
 
-- name: Run ssbench-master on benchnodes (SKIP Load balancer)
+- name: run ssbench-master
   shell: >
     ssbench-master run-scenario
     -f /usr/local/share/ssbench/scenarios/very_small.scenario 
     -A {{auth}} 
     -U {{user}} 
     -K {{key}} 
-    -u 5 -r 10 --worker 1
+    -u {{item}} -r 10 --worker 1
+    -s /tmp/{{user}}-{{key}}-{{item}}.ret 
   register: result
+  with_items:
+    - "{{concurrency}}"
 
 - name: show result
   local_action: command echo item
   with_items: result.stdout
 
-
+- name: generate CSV
+  shell: >
+    ssbench-master report-scenario --csv 
+    -s "/tmp/{{user}}-{{key}}-{{item}}.ret.gz" > /tmp/{{user}}-{{key}}-{{item}}.csv
+  with_items:
+    - "{{concurrency}}"

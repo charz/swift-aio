@@ -28,7 +28,7 @@
     - run_benchmark
 
 - name: retrieve result
-  hosts: storage
+  hosts: all
   tags: retrieve_result
   vars_files:
     - "global_vars.yml"
