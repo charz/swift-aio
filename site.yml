@@ -35,4 +35,49 @@
   roles:
     - retrieve_result
 
+- name: common tools
+  hosts: all
+  sudo: True
+  tags: tools
+  vars_files:
+    - "global_vars.yml"
+  tasks:
+    - name: Install tools
+      apt: pkg={{item}} state=installed update-cache=yes 
+      with_items:
+        - iperf
+
+- name: start bandwith test (storage)
+  hosts: storage
+  tags: bandwidth
+  vars_files:
+    - "global_vars.yml"
+  vars:
+    server: true
+    up: true
+  roles:
+    - check_bandwidth
+
+- name: check bandwith (benchmark)
+  hosts: benchmark
+  tags: bandwidth
+  vars_files:
+    - "global_vars.yml"
+  vars:
+    server: false
+
+  roles:
+    - check_bandwidth
+
+- name: stop bandwith test (storage)
+  hosts: storage
+  tags: bandwidth
+  vars_files:
+    - "global_vars.yml"
+  vars:
+    server: true
+    up: false
+  roles:
+    - check_bandwidth
+
 

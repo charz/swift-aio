@@ -13,3 +13,4 @@ configure_swiftonfile: no
 
 #default_storage_policy: gold|silver|swiftonfile
 default_storage_policy: gold
+

@@ -1,0 +1,22 @@
+---
+
+- name: Start iperf server
+  shell: iperf -f g -s &
+  when: server and up
+
+- name: Starting test bandwidth
+  shell: iperf -f g -c {{item}} -P 10
+  with_items:  groups['storage']
+  register: bandwidth_result
+  when: not server
+
+- name: show result
+  debug: var=bandwidth_result['results']
+  when: not server
+
+- name: Start iperf server
+  sudo: true
+  shell: "kill -9 `pidof iperf`"
+  when: server and not up
+
+
